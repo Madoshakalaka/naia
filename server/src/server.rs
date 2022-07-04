@@ -5,6 +5,7 @@ use std::{
     panic,
     sync::{Arc, RwLock},
 };
+use log::debug;
 
 use naia_server_socket::{ServerAddrs, Socket};
 use naia_shared::{
@@ -428,6 +429,7 @@ impl<P: Protocolize, E: Copy + Eq + Hash + Send + Sync, C: ChannelIndex> Server<
     /// which can be used to add users/entities to the room or retrieve its
     /// key
     pub fn make_room(&mut self) -> RoomMut<P, E, C> {
+        debug!("making room!");
         let new_room = Room::new();
         let room_key = self.rooms.insert(new_room);
         RoomMut::new(self, &room_key)
@@ -942,13 +944,17 @@ impl<P: Protocolize, E: Copy + Eq + Hash + Send + Sync, C: ChannelIndex> Server<
                                 );
                             }
                             PacketType::Disconnect => {
-                                if self
-                                    .handshake_manager
-                                    .verify_disconnect_request(user_connection, &mut reader)
-                                {
+
+                                // fixme: this seems to always return false on a client initiated disconnection request
+                                // if self
+                                //     .handshake_manager
+                                //     .verify_disconnect_request(user_connection, &mut reader)
+                                // {
+
+                                    debug!("really disconnecting now!");
                                     let user_key = user_connection.user_key;
                                     self.disconnect_user(&user_key);
-                                }
+                                // }
                             }
                             PacketType::Heartbeat => {
                                 // read client tick, don't need to do anything else
@@ -1005,6 +1011,7 @@ impl<P: Protocolize, E: Copy + Eq + Hash + Send + Sync, C: ChannelIndex> Server<
                     break;
                 }
                 Err(error) => {
+                    debug!("client errors");
                     self.incoming_events
                         .push_back(Err(NaiaServerError::Wrapped(Box::new(error))));
                 }
@@ -1013,6 +1020,7 @@ impl<P: Protocolize, E: Copy + Eq + Hash + Send + Sync, C: ChannelIndex> Server<
     }
 
     pub(crate) fn disconnect_user(&mut self, user_key: &UserKey) {
+        debug!("disconnecting user");
         if let Some(user) = self.delete_user(user_key) {
             self.incoming_events
                 .push_back(Ok(Event::Disconnection(*user_key, user)));
