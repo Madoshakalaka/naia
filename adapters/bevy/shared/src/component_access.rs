@@ -1,6 +1,7 @@
 use std::{any::Any, marker::PhantomData};
 
 use bevy_ecs::{entity::Entity, world::World};
+use bevy_ecs::prelude::Component;
 
 use naia_shared::{Protocolize, ReplicaDynMutWrapper, ReplicaDynRefWrapper, ReplicateSafe};
 
@@ -31,7 +32,7 @@ pub struct ComponentAccessor<P: Protocolize, R: ReplicateSafe<P>> {
     phantom_r: PhantomData<R>,
 }
 
-impl<P: 'static + Protocolize, R: ReplicateSafe<P>> ComponentAccessor<P, R> {
+impl<P: 'static + Protocolize, R: ReplicateSafe<P> + Component> ComponentAccessor<P, R> {
     pub fn create() -> Box<dyn Any> {
         let inner_box: Box<dyn ComponentAccess<P>> = Box::new(ComponentAccessor {
             phantom_p: PhantomData::<P>,
@@ -41,7 +42,7 @@ impl<P: 'static + Protocolize, R: ReplicateSafe<P>> ComponentAccessor<P, R> {
     }
 }
 
-impl<P: Protocolize, R: ReplicateSafe<P>> ComponentAccess<P> for ComponentAccessor<P, R> {
+impl<P: Protocolize, R: ReplicateSafe<P> + Component> ComponentAccess<P> for ComponentAccessor<P, R> {
     fn component<'w>(
         &self,
         world: &'w World,

@@ -4,6 +4,7 @@ use bevy_ecs::{
     system::{SystemMeta, SystemParamFetch, SystemParamState},
     world::World,
 };
+use bevy_ecs::prelude::Component;
 
 use naia_client::shared::{ChannelIndex, Protocolize};
 
@@ -26,7 +27,7 @@ unsafe impl<P: Protocolize, C: ChannelIndex> SystemParamState for State<P, C> {
     }
 }
 
-impl<'world, 'state, P: Protocolize, C: ChannelIndex> SystemParamFetch<'world, 'state>
+impl<'world, 'state, P: Protocolize+ Component, C: ChannelIndex> SystemParamFetch<'world, 'state>
     for State<P, C>
 {
     type Item = Client<'world, P, C>;

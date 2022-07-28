@@ -5,6 +5,7 @@ use bevy_ecs::{
     system::SystemParam,
     world::{Mut, World},
 };
+use bevy_ecs::component::Component;
 
 use naia_client::{
     shared::{ChannelIndex, Protocolize, ReplicateSafe},
@@ -18,13 +19,13 @@ use super::state::State;
 
 // Client
 
-pub struct Client<'a, P: Protocolize, C: ChannelIndex> {
+pub struct Client<'a, P: Protocolize + Component, C: ChannelIndex> {
     world: &'a World,
     client: Mut<'a, NaiaClient<P, Entity, C>>,
     phantom_p: PhantomData<P>,
 }
 
-impl<'a, P: Protocolize, C: ChannelIndex> Client<'a, P, C> {
+impl<'a, P: Protocolize + Component, C: ChannelIndex> Client<'a, P, C> {
     // Public Methods //
 
     pub fn new(world: &'a World) -> Self {
@@ -43,7 +44,7 @@ impl<'a, P: Protocolize, C: ChannelIndex> Client<'a, P, C> {
 
     //// Connections ////
 
-    pub fn auth<R: ReplicateSafe<P>>(&mut self, auth: R) {
+    pub fn auth<R: ReplicateSafe<P> >(&mut self, auth: R) {
         self.client.auth(auth);
     }
 
@@ -103,11 +104,11 @@ impl<'a, P: Protocolize, C: ChannelIndex> Client<'a, P, C> {
     }
 }
 
-impl<'a, P: Protocolize, C: ChannelIndex> SystemParam for Client<'a, P, C> {
+impl<'a, P: Protocolize + Component, C: ChannelIndex> SystemParam for Client<'a, P, C> {
     type Fetch = State<P, C>;
 }
 
-impl<'a, P: Protocolize, C: ChannelIndex> EntityHandleConverter<Entity> for Client<'a, P, C> {
+impl<'a, P: Protocolize + Component, C: ChannelIndex> EntityHandleConverter<Entity> for Client<'a, P, C> {
     fn handle_to_entity(&self, entity_handle: &EntityHandle) -> Entity {
         self.client.handle_to_entity(entity_handle)
     }

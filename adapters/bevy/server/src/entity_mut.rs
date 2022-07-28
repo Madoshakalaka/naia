@@ -1,4 +1,5 @@
 use bevy_ecs::entity::Entity;
+use bevy_ecs::prelude::Component;
 
 use naia_server::{
     shared::{ChannelIndex, Protocolize, Replicate, ReplicateSafe},
@@ -17,7 +18,7 @@ pub struct EntityMut<'s, 'world, 'state, P: Protocolize, C: ChannelIndex> {
     server: &'s mut Server<'world, 'state, P, C>,
 }
 
-impl<'s, 'world, 'state, P: Protocolize, C: ChannelIndex> EntityMut<'s, 'world, 'state, P, C> {
+impl<'s, 'world, 'state, P: Protocolize + Component, C: ChannelIndex> EntityMut<'s, 'world, 'state, P, C> {
     pub fn new(entity: Entity, server: &'s mut Server<'world, 'state, P, C>) -> Self {
         EntityMut { entity, server }
     }

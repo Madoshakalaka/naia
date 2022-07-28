@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use bevy_ecs::component::Component;
 
 use bevy_ecs::entity::Entity;
 
@@ -27,7 +28,7 @@ impl DespawnEntity {
     }
 }
 
-impl<P: Protocolize, C: ChannelIndex> Command<P, C> for DespawnEntity {
+impl<P: Protocolize + Component, C: ChannelIndex> Command<P, C> for DespawnEntity {
     fn write(self: Box<Self>, server: &mut Server<P, Entity, C>, world: WorldMut) {
         server.entity_mut(world, &self.entity).despawn();
     }
@@ -51,7 +52,7 @@ impl<P: Protocolize, R: ReplicateSafe<P>> InsertComponent<P, R> {
     }
 }
 
-impl<P: Protocolize, R: ReplicateSafe<P>, C: ChannelIndex> Command<P, C> for InsertComponent<P, R> {
+impl<P: Protocolize + Component, R: ReplicateSafe<P>, C: ChannelIndex> Command<P, C> for InsertComponent<P, R> {
     fn write(self: Box<Self>, server: &mut Server<P, Entity, C>, world: WorldMut) {
         server
             .entity_mut(world, &self.entity)
@@ -77,7 +78,7 @@ impl<P: Protocolize, R: Replicate<P>> RemoveComponent<P, R> {
     }
 }
 
-impl<P: Protocolize, R: Replicate<P>, C: ChannelIndex> Command<P, C> for RemoveComponent<P, R> {
+impl<P: Protocolize + Component, R: Replicate<P>, C: ChannelIndex> Command<P, C> for RemoveComponent<P, R> {
     fn write(self: Box<Self>, server: &mut Server<P, Entity, C>, world: WorldMut) {
         server
             .entity_mut(world, &self.entity)

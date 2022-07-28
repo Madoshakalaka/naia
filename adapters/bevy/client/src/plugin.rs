@@ -2,6 +2,7 @@ use std::{marker::PhantomData, ops::DerefMut, sync::Mutex};
 
 use bevy_app::{App, CoreStage, Plugin as PluginType};
 use bevy_ecs::{entity::Entity, schedule::SystemStage, system::IntoExclusiveSystem};
+use bevy_ecs::component::Component;
 
 use naia_client::{
     shared::{ChannelIndex, Protocolize, SharedConfig},
@@ -54,7 +55,7 @@ impl<P: Protocolize, C: ChannelIndex> Plugin<P, C> {
     }
 }
 
-impl<P: Protocolize, C: ChannelIndex> PluginType for Plugin<P, C> {
+impl<P: Protocolize + Component, C: ChannelIndex> PluginType for Plugin<P, C> {
     fn build(&self, app: &mut App) {
         let config = self.config.lock().unwrap().deref_mut().take().unwrap();
         let client = Client::<P, Entity, C>::new(&config.client_config, &config.shared_config);

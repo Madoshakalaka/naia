@@ -1,4 +1,5 @@
 use std::{collections::VecDeque, hash::Hash, net::SocketAddr, time::Duration};
+use bevy_ecs::component::Component;
 
 use naia_shared::{
     serde::{BitReader, BitWriter, OwnedBitReader},
@@ -25,7 +26,7 @@ pub struct Connection<P: Protocolize, E: Copy + Eq + Hash, C: ChannelIndex> {
     jitter_buffer: TickQueue<OwnedBitReader>,
 }
 
-impl<P: Protocolize, E: Copy + Eq + Hash, C: ChannelIndex> Connection<P, E, C> {
+impl<P: Protocolize + Component, E: Copy + Eq + Hash, C: ChannelIndex> Connection<P, E, C> {
     pub fn new(
         address: SocketAddr,
         connection_config: &ConnectionConfig,

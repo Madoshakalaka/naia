@@ -5,6 +5,7 @@ use bevy_ecs::{
     system::{Res, ResMut},
     world::{Mut, World},
 };
+use bevy_ecs::component::Component;
 
 use naia_client::{
     shared::{ChannelIndex, Protocolize},
@@ -20,7 +21,7 @@ use crate::events::{
 
 use super::resource::ClientResource;
 
-pub fn before_receive_events<P: Protocolize, C: ChannelIndex>(world: &mut World) {
+pub fn before_receive_events<P: Protocolize+Component, C: ChannelIndex>(world: &mut World) {
     world.resource_scope(|world, mut client: Mut<Client<P, Entity, C>>| {
         world.resource_scope(|world, mut client_resource: Mut<ClientResource>| {
             let event_results = client.receive(world.proxy_mut());
@@ -124,7 +125,7 @@ pub fn finish_tick(mut resource: ResMut<ClientResource>) {
     resource.ticker.reset();
 }
 
-pub fn should_receive<P: Protocolize, C: ChannelIndex>(
+pub fn should_receive<P: Protocolize + Component, C: ChannelIndex>(
     client: Res<Client<P, Entity, C>>,
 ) -> ShouldRun {
     if client.is_connecting() {

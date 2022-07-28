@@ -8,6 +8,7 @@ use bevy_ecs::{
     entity::Entity,
     world::{FromWorld, World},
 };
+use bevy_ecs::prelude::Component;
 
 use naia_shared::{Protocolize, ReplicateSafe};
 
@@ -68,7 +69,7 @@ impl<P: Protocolize> WorldData<P> {
         self.kind_to_accessor_map.contains_key(component_kind)
     }
 
-    pub(crate) fn put_kind<R: ReplicateSafe<P>>(&mut self, component_kind: &P::Kind) {
+    pub(crate) fn put_kind<R: ReplicateSafe<P> + Component>(&mut self, component_kind: &P::Kind) {
         self.kind_to_accessor_map
             .insert(*component_kind, ComponentAccessor::<P, R>::create());
     }

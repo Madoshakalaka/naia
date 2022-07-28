@@ -5,6 +5,7 @@ use bevy_ecs::{
     system::SystemParam,
     world::{Mut, World},
 };
+use bevy_ecs::prelude::Component;
 
 use naia_server::{
     shared::{ChannelIndex, EntityHandleConverter, Protocolize, ReplicateSafe},
@@ -26,7 +27,7 @@ pub struct Server<'world, 'state, P: Protocolize, C: ChannelIndex> {
     phantom_p: PhantomData<P>,
 }
 
-impl<'world, 'state, P: Protocolize, C: ChannelIndex> Server<'world, 'state, P, C> {
+impl<'world, 'state, P: Protocolize + Component, C: ChannelIndex> Server<'world, 'state, P, C> {
     // Public Methods //
 
     pub fn new(state: &'state mut State<P, C>, world: &'world World) -> Self {
@@ -181,7 +182,7 @@ impl<'world, 'state, P: Protocolize, C: ChannelIndex> Server<'world, 'state, P, 
     }
 }
 
-impl<'world, 'state, P: Protocolize, C: ChannelIndex> SystemParam for Server<'world, 'state, P, C> {
+impl<'world, 'state, P: Protocolize + Component, C: ChannelIndex> SystemParam for Server<'world, 'state, P, C> {
     type Fetch = State<P, C>;
 }
 

@@ -5,6 +5,7 @@ use bevy_ecs::{
     system::{Command, Commands, EntityCommands},
     world::World,
 };
+use bevy_ecs::prelude::Component;
 
 use naia_bevy_shared::WorldProxyMut;
 
@@ -15,7 +16,7 @@ pub trait CommandsExt<'w, 's, P: Protocolize> {
     fn mirror_entities(&mut self, mutable_entity: Entity, immutable_entity: Entity);
 }
 
-impl<'w, 's, P: Protocolize> CommandsExt<'w, 's, P> for Commands<'w, 's> {
+impl<'w, 's, P: Protocolize + Component> CommandsExt<'w, 's, P> for Commands<'w, 's> {
     fn duplicate_entity<'a>(&'a mut self, entity: Entity) -> EntityCommands<'w, 's, 'a> {
         let new_entity = self.spawn().id();
         let command = DuplicateComponents::<P>::new(new_entity, entity);
@@ -46,7 +47,7 @@ impl<P: Protocolize> DuplicateComponents<P> {
     }
 }
 
-impl<P: Protocolize> Command for DuplicateComponents<P> {
+impl<P: Protocolize+Component> Command for DuplicateComponents<P> {
     fn write(self, world: &mut World) {
         WorldMutType::<P, Entity>::duplicate_components(
             &mut world.proxy_mut(),
@@ -74,7 +75,7 @@ impl<P: Protocolize> MirrorEntities<P> {
     }
 }
 
-impl<P: Protocolize> Command for MirrorEntities<P> {
+impl<P: Protocolize+Component> Command for MirrorEntities<P> {
     fn write(self, world: &mut World) {
         WorldMutType::<P, Entity>::mirror_entities(
             &mut world.proxy_mut(),

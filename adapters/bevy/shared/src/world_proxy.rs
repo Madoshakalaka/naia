@@ -2,6 +2,7 @@ use bevy_ecs::{
     entity::Entity,
     world::{Mut, World},
 };
+use bevy_ecs::component::Component;
 
 use naia_shared::{
     ComponentUpdate, NetEntityHandleConverter, ProtocolInserter, ProtocolKindType, Protocolize,
@@ -122,7 +123,7 @@ impl<'w, P: Protocolize> WorldRefType<P, Entity> for WorldMut<'w> {
     }
 }
 
-impl<'w, P: Protocolize> WorldMutType<P, Entity> for WorldMut<'w> {
+impl<'w, P: Protocolize + Component> WorldMutType<P, Entity> for WorldMut<'w> {
     fn spawn_entity(&mut self) -> Entity {
         let entity = self.world.spawn().id();
 
@@ -179,7 +180,7 @@ impl<'w, P: Protocolize> WorldMutType<P, Entity> for WorldMut<'w> {
         kinds
     }
 
-    fn component_mut<R: ReplicateSafe<P>>(
+    fn component_mut<R: ReplicateSafe<P> + Component>(
         &mut self,
         entity: &Entity,
     ) -> Option<ReplicaMutWrapper<P, R>> {
@@ -262,7 +263,7 @@ impl<'w, P: Protocolize> WorldMutType<P, Entity> for WorldMut<'w> {
     }
 }
 
-impl<'w, P: Protocolize> ProtocolInserter<P, Entity> for WorldMut<'w> {
+impl<'w, P: Protocolize + Component> ProtocolInserter<P, Entity> for WorldMut<'w> {
     fn insert<I: ReplicateSafe<P>>(&mut self, entity: &Entity, impl_ref: I) {
         self.insert_component::<I>(entity, impl_ref);
     }
