@@ -1,5 +1,4 @@
 use std::{collections::VecDeque, hash::Hash, marker::PhantomData, net::SocketAddr};
-use bevy_ecs::component::Component;
 
 use naia_client_socket::Socket;
 
@@ -36,7 +35,7 @@ pub struct Client<P: Protocolize, E: Copy + Eq + Hash, C: ChannelIndex> {
     phantom_k: PhantomData<E>,
 }
 
-impl<P: Protocolize+Component, E: Copy + Eq + Hash, C: ChannelIndex> Client<P, E, C> {
+impl<P: Protocolize, E: Copy + Eq + Hash, C: ChannelIndex> Client<P, E, C> {
     /// Create a new Client
     pub fn new(client_config: &ClientConfig, shared_config: &SharedConfig<C>) -> Self {
         let handshake_manager = HandshakeManager::new(client_config.send_handshake_interval);

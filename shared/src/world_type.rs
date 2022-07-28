@@ -1,3 +1,4 @@
+use bevy_ecs::component::Component;
 use crate::{ComponentUpdate, Replicate};
 
 use crate::protocol::{
@@ -53,7 +54,7 @@ pub trait WorldMutType<P: Protocolize, E>: WorldRefType<P, E> + ProtocolInserter
     /// gets all of an Entity's Components as a list of Kinds
     fn component_kinds(&mut self, entity: &E) -> Vec<P::Kind>;
     /// gets an entity's component
-    fn component_mut<'a, R: ReplicateSafe<P>>(
+    fn component_mut<'a, R: ReplicateSafe<P> + Component>(
         &'a mut self,
         entity: &E,
     ) -> Option<ReplicaMutWrapper<'a, P, R>>;
@@ -77,9 +78,9 @@ pub trait WorldMutType<P: Protocolize, E>: WorldRefType<P, E> + ProtocolInserter
         component_kind: &P::Kind,
     );
     /// insert a component
-    fn insert_component<R: ReplicateSafe<P>>(&mut self, entity: &E, component_ref: R);
+    fn insert_component<R: ReplicateSafe<P> + Component>(&mut self, entity: &E, component_ref: R);
     /// remove a component
-    fn remove_component<R: Replicate<P>>(&mut self, entity: &E) -> Option<R>;
+    fn remove_component<R: Replicate<P> + Component>(&mut self, entity: &E) -> Option<R>;
     /// remove a component by kind
     fn remove_component_of_kind(&mut self, entity: &E, component_kind: &P::Kind) -> Option<P>;
 }

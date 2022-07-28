@@ -2,7 +2,6 @@ use std::{
     collections::{HashMap, VecDeque},
     hash::Hash,
 };
-use bevy_ecs::component::Component;
 
 use naia_shared::{
     message_list_header,
@@ -36,7 +35,7 @@ impl<P: Protocolize, E: Copy + Eq + Hash> Default for EntityManager<P, E> {
     }
 }
 
-impl<P: Protocolize + Component, E: Copy + Eq + Hash> EntityManager<P, E> {
+impl<P: Protocolize, E: Copy + Eq + Hash> EntityManager<P, E> {
     // Action Reader
 
     pub fn read_all<W: WorldMutType<P, E>, C: ChannelIndex>(

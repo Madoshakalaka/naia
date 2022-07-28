@@ -23,4 +23,4 @@ use-webrtc = [ "naia-server/use-webrtc" ]
 naia-server = { version = "0.10", path = "../../../server", features = ["bevy_support"] }
 naia-bevy-shared = { version = "0.10.1", path = "../shared" }
 bevy_app = { git = "https://github.com/bevyengine/bevy.git", default-features=false }
-bevy_ecs = { git = "https://github.com/bevyengine/bevy.git", default-features=false }
+bevy_ecs = { git = "https://github.com/bevyengine/bevy.git", default-features=false}

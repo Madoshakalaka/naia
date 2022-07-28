@@ -234,7 +234,7 @@ impl<'w, P: Protocolize + Component> WorldMutType<P, Entity> for WorldMut<'w> {
             });
     }
 
-    fn insert_component<I: ReplicateSafe<P>>(&mut self, entity: &Entity, component_ref: I) {
+    fn insert_component<I: ReplicateSafe<P> + Component>(&mut self, entity: &Entity, component_ref: I) {
         // cache type id for later
         // todo: can we initialize this map on startup via Protocol derive?
         let mut world_data = world_data_unchecked_mut(self.world);
